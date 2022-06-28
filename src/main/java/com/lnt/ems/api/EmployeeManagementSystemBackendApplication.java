@@ -1,4 +1,4 @@
-package com.lnt.ems.api.employeemanagementsystembackend;
+package com.lnt.ems.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
