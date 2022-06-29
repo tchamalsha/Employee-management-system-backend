@@ -10,6 +10,11 @@ public class EmployeeController {
 
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    public EmployeeController(EmployeeRepository employeeRepository){
+        this.employeeRepository = employeeRepository;
+    }
+
     @PostMapping("/employee")
     public void addStudent(@RequestBody Employee employeeData) {
         employeeRepository.save(employeeData);
