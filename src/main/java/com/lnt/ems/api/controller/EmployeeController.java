@@ -17,8 +17,10 @@ public class EmployeeController {
 
     @PostMapping("/employee")
     public void addStudent(@RequestBody Employee employeeData) {
+        employeeData.setRole("EMPLOYEE");
         employeeRepository.save(employeeData);
     }
+
 
 
 }
