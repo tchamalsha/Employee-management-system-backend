@@ -2,22 +2,31 @@ package com.lnt.ems.api.controller;
 
 import com.lnt.ems.api.model.Admin;
 import com.lnt.ems.api.repository.AdminRepository;
+import com.lnt.ems.api.service.AdminServiceImpl;
+import com.lnt.ems.api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class AdminController {
 
-    private AdminRepository adminRepository;
+    private AdminServiceImpl adminService;
 
     @Autowired
-    public AdminController(AdminRepository adminRepository){
-        this.adminRepository =adminRepository;
+    public AdminController(AdminServiceImpl adminService){
+        this.adminService=adminService;
     }
 
     @PostMapping("/admin")
     private void addAdmin(@RequestBody Admin adminData){
-        adminData.setRole("ADMIN");
-        adminRepository.save(adminData);
+        adminService.addAdmin(adminData);
     }
+
+    @GetMapping("/admins")
+    private List<Admin> getAllAdmins(){
+        return adminService.getAllAdmins();
+    }
+
 }

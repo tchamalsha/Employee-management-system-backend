@@ -25,13 +25,13 @@ public class Salary {
     @Id
     private Integer id;
     private Date date;
-    private Float salary;
+    private Float salaryAmount;
 
-        public Float getSalary() {
-                return salary;
+        public Float getSalaryAmount() {
+                return salaryAmount;
         }
 
-        public void setSalary(Float salary) {
-                this.salary = salary;
+        public void setSalaryAmount(Float salary) {
+                this.salaryAmount = salary;
         }
 }
