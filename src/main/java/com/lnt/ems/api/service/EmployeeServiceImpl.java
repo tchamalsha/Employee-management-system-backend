@@ -4,6 +4,7 @@ import com.lnt.ems.api.model.Employee;
 import com.lnt.ems.api.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,6 +17,14 @@ import java.util.List;
 public class EmployeeServiceImpl implements UserServiceImpl {
 
     private final EmployeeRepository employeeRepository;
+
+
+
+    //save an employee
+    public void addEmployee(Employee employee){
+        employee.setRole("EMPLOYEE");
+        employeeRepository.save(employee);
+    }
 
     //get all employees
     public List<Employee> getAllEmployees(){
