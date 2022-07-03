@@ -37,4 +37,20 @@ public class SalaryServiceImpl  {
         return  basicSalaryRepository.getBasicSalary(id);
     }
 
+    //get OT rate
+    public Float getOtRate(Integer id){
+        return basicSalaryRepository.getOtRate(id);
+    }
+
+    //calculate salary
+    public Float calculateSalary(Integer id,Date date){
+        Integer basicSalary = getBasicSalary(id);
+        Float otRate = getOtRate(id);
+        SalaryData salaryData = getSalaryData(id,date);
+
+        Float totalSalary = (basicSalary-(basicSalary/25 * salaryData.getNoPayDays())) + salaryData.getAttendanceBonus() +
+                (otRate*salaryData.getOverTimeHours());
+
+        return totalSalary;
+    }
 }
