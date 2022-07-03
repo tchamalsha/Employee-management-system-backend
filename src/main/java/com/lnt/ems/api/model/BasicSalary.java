@@ -40,5 +40,14 @@ public class BasicSalary {
         this.basicSalary = basicSalary;
     }
 
+    public Float getOtRate() {
+        return otRate;
+    }
+
+    public void setOtRate(Float otRate) {
+        this.otRate = otRate;
+    }
+
     private Integer basicSalary;
+    private Float otRate;
 }

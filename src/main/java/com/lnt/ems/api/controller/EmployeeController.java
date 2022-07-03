@@ -28,5 +28,10 @@ public class EmployeeController {
         return  employeeService.getAllEmployees();
     }
 
+    @GetMapping("/login")
+    public Boolean isLoginSuccess(@RequestBody Integer id,String password){
+        return employeeService.isLoginSuccess(id,password);
+    }
+
 
 }

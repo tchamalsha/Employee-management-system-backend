@@ -38,4 +38,7 @@ public class EmployeeServiceImpl implements UserServiceImpl {
         return personalDetailsRepository.getPersonalDetails(id);
     }
 
+    public Boolean isLoginSuccess(Integer id,String password){
+        return (employeeRepository.getPassword(id)==password);
+    }
 }
