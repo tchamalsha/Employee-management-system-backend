@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class AdminServiceImpl implements UserServiceImpl {
+public class AdminServiceImpl  {
 
     private final AdminRepository adminRepository;
 

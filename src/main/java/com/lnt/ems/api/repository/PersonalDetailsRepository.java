@@ -14,4 +14,5 @@ public interface PersonalDetailsRepository extends JpaRepository<PersonalDetails
     @Query("SELECT pd FROM PersonalDetails pd where pd.id=?1")
     PersonalDetails getPersonalDetails(Integer id);
 
+
 }
