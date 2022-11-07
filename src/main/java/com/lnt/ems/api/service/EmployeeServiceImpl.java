@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class EmployeeServiceImpl implements UserServiceImpl {
+public class EmployeeServiceImpl {
 
     private final EmployeeRepository employeeRepository;
     private final PersonalDetailsRepository personalDetailsRepository;

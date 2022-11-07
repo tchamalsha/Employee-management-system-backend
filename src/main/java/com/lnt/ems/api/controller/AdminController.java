@@ -1,7 +1,7 @@
 package com.lnt.ems.api.controller;
 
 import com.lnt.ems.api.model.Admin;
-import com.lnt.ems.api.repository.AdminRepository;
+import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.service.AdminServiceImpl;
 import com.lnt.ems.api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +15,11 @@ public class AdminController {
 
     private AdminServiceImpl adminService;
 
+
     @Autowired
     public AdminController(AdminServiceImpl adminService){
         this.adminService=adminService;
+
     }
 
     @PostMapping("/admin/signup")
