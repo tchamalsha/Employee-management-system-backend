@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class AdminController {
 
     private AdminServiceImpl adminService;
@@ -19,7 +20,7 @@ public class AdminController {
         this.adminService=adminService;
     }
 
-    @PostMapping("/admin")
+    @PostMapping("/admin/signup")
     private void addAdmin(@RequestBody Admin adminData){
         adminService.addAdmin(adminData);
     }
