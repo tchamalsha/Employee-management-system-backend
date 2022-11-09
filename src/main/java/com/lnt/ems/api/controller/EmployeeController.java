@@ -21,20 +21,14 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @PostMapping("/employee/signup")
-    public void addStudent(@RequestBody Employee employeeData) {
-        employeeService.addEmployee(employeeData);
-    }
+
 
     @GetMapping("/employees")
     public List<Employee> getEmployees(){
         return  employeeService.getAllEmployees();
     }
 
-    @GetMapping("/login")
-    public Boolean isLoginSuccess(@RequestBody Integer id,String password){
-        return employeeService.isLoginSuccess(id,password);
-    }
+
 
 
 }

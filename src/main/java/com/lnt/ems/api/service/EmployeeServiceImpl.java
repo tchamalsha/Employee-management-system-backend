@@ -22,11 +22,6 @@ public class EmployeeServiceImpl {
     private final PersonalDetailsRepository personalDetailsRepository;
 
 
-    //save an employee
-    public void addEmployee(Employee employee){
-        employee.setRole("EMPLOYEE");
-        employeeRepository.save(employee);
-    }
 
     //get all employees
     public List<Employee> getAllEmployees(){
@@ -38,7 +33,6 @@ public class EmployeeServiceImpl {
         return personalDetailsRepository.getPersonalDetails(id);
     }
 
-    public Boolean isLoginSuccess(Integer id,String password){
-        return (employeeRepository.getPassword(id)==password);
-    }
+
+
 }

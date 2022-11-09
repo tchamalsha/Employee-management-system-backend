@@ -1,5 +1,6 @@
 package com.lnt.ems.api.service;
 
+import com.lnt.ems.api.model.BasicSalary;
 import com.lnt.ems.api.model.SalaryData;
 import com.lnt.ems.api.repository.BasicSalaryRepository;
 import com.lnt.ems.api.repository.SalaryDataRepository;
@@ -22,6 +23,10 @@ public class SalaryServiceImpl  {
     private final BasicSalaryRepository basicSalaryRepository;
     private final SalaryDataRepository salaryDataRepository;
 
+    //add salary
+    public void setSalaryData(BasicSalary basicSalary){
+        basicSalaryRepository.save(basicSalary);
+    }
     //get salary of an employee
     public Float getSalary(Integer id, Date date){
         return salaryRepository.getEmployeeSalary(date,id);

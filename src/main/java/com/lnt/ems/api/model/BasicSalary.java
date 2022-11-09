@@ -40,6 +40,10 @@ public class BasicSalary {
         this.basicSalary = basicSalary;
     }
 
+
+
+    private Integer basicSalary;
+
     public Float getOtRate() {
         return otRate;
     }
@@ -48,6 +52,7 @@ public class BasicSalary {
         this.otRate = otRate;
     }
 
-    private Integer basicSalary;
     private Float otRate;
+
+    private Integer specialAllowance;
 }
