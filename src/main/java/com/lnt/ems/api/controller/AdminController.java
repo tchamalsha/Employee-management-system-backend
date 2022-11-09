@@ -22,11 +22,6 @@ public class AdminController {
 
     }
 
-    @PostMapping("/admin/signup")
-    private void addAdmin(@RequestBody Admin adminData){
-        adminService.addAdmin(adminData);
-    }
-
     @GetMapping("/admins")
     private List<Admin> getAllAdmins(){
         return adminService.getAllAdmins();

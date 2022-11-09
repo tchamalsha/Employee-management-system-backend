@@ -22,10 +22,6 @@ public class AdminServiceImpl  {
         return adminRepository.findAll();
     }
 
-    //add admin
-    public void addAdmin(Admin admin){
-        admin.setRole("ADMIN");
-        adminRepository.save(admin);
-    }
+
 
 }
