@@ -41,4 +41,6 @@ public class EmployeeServiceImpl {
     public Boolean isLoginSuccess(Integer id,String password){
         return (employeeRepository.getPassword(id)==password);
     }
+
+
 }
