@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
+import java.util.Date;
 
 @Table(
         uniqueConstraints = @UniqueConstraint(
@@ -21,35 +19,61 @@ import javax.persistence.UniqueConstraint;
 public class Employee {
 
         @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Integer id;
-        private String name;
-        private String email;
+
+        private Integer cid;
+        private String fullName;
+        private String initials;
+
+        private String nid;
+        private String contact;
+        private String address;
+        private Integer basic;
+        private String emergencyContact;
+        private Date dateHired;
         private String password;
         private String position;
-        private String role;
+        private String department;
 
-        public String getName() {
-                return name;
+        public Integer getId() {
+                return id;
         }
 
-        public void setName(String name) {
-                this.name = name;
+        public void setId(Integer id) {
+                this.id = id;
         }
 
-        public String getEmail() {
-                return email;
+        public String getFullName() {
+                return fullName;
         }
 
-        public void setEmail(String email) {
-                this.email = email;
+        public void setFullName(String fullName) {
+                this.fullName = fullName;
         }
 
-        public String getPassword() {
-                return password;
+        public Integer getCid() {
+                return cid;
         }
 
-        public void setPassword(String password) {
-                this.password = password;
+        public void setCid(Integer cid) {
+                this.cid = cid;
+        }
+
+        public String getInitials() {
+                return initials;
+        }
+
+        public void setInitials(String initials) {
+                this.initials = initials;
+        }
+
+        public String getDepartment() {
+                return department;
+        }
+
+        public void setDepartment(String department) {
+                this.department = department;
         }
 
         public String getPosition() {
@@ -60,19 +84,62 @@ public class Employee {
                 this.position = position;
         }
 
-        public String getRole() {
-                return role;
+        public String getPassword() {
+                return password;
         }
 
-        public void setRole(String role) {
-                this.role = role;
+        public void setPassword(String password) {
+                this.password = password;
         }
 
-        public Integer getId() {
-                return id;
+        public Date getDateHired() {
+                return dateHired;
         }
 
-        public void setId(Integer id) {
-                this.id = id;
+        public void setDateHired(Date dateHired) {
+                this.dateHired = dateHired;
         }
+
+        public String getEmergencyContact() {
+                return emergencyContact;
+        }
+
+        public void setEmergencyContact(String emergencyContact) {
+                this.emergencyContact = emergencyContact;
+        }
+
+        public Integer getBasic() {
+                return basic;
+        }
+
+        public void setBasic(Integer basic) {
+                this.basic = basic;
+        }
+
+        public String getAddress() {
+                return address;
+        }
+
+        public void setAddress(String address) {
+                this.address = address;
+        }
+
+        public String getContact() {
+                return contact;
+        }
+
+        public void setContact(String contact) {
+                this.contact = contact;
+        }
+
+        public String getNid() {
+                return nid;
+        }
+
+        public void setNid(String nid) {
+                this.nid = nid;
+        }
+
+
+
 }

@@ -24,7 +24,6 @@ public class EmployeeServiceImpl implements UserServiceImpl {
 
     //save an employee
     public void addEmployee(Employee employee){
-        employee.setRole("EMPLOYEE");
         employeeRepository.save(employee);
     }
 
