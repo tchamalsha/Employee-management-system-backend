@@ -22,9 +22,29 @@ public class EmployeeServiceImpl implements UserServiceImpl {
     private final PersonalDetailsRepository personalDetailsRepository;
 
 
-    //save an employee
-    public void addEmployee(Employee employee){
-        employeeRepository.save(employee);
+    public Integer generateCid(String department, Integer id) {
+        String departmentCode;
+
+        // Determine the department code based on the department
+        switch (department) {
+            case "Cutting Department":
+                departmentCode = "100";
+                break;
+            case "Packing Department":
+                departmentCode = "200";
+                break;
+            case "Stitching Department":
+                departmentCode = "300";
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown department: " + department);
+        }
+
+        // Format the ID to be three digits (e.g., 001 for 1)
+        String idFormatted = String.format("%03d", id);
+
+        // Combine the department code and the formatted ID
+        return Integer.parseInt(departmentCode + idFormatted);
     }
 
     //get all employees

@@ -14,16 +14,22 @@ import java.util.List;
 @CrossOrigin
 public class EmployeeController {
 
+    private final EmployeeRepository employeeRepository;
     private EmployeeServiceImpl employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeServiceImpl employeeService) {
+    public EmployeeController(EmployeeServiceImpl employeeService, EmployeeRepository employeeRepository) {
         this.employeeService = employeeService;
+        this.employeeRepository = employeeRepository;
     }
 
     @PostMapping("/employee/register")
-    public void registerEmployee(@RequestBody Employee employeeData) {
-        employeeService.addEmployee(employeeData);
+    public ResponseEntity<Employee> registerEmployee(@RequestBody Employee employeeData) {
+        Employee savedEmployee = employeeRepository.save(employeeData);
+        Integer cid = employeeService.generateCid(savedEmployee.getDepartment(),savedEmployee.getId());
+        savedEmployee.setCid(cid);
+        savedEmployee = employeeRepository.save(employeeData);
+        return ResponseEntity.ok(savedEmployee);
     }
 
     @GetMapping("/employees")
