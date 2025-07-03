@@ -28,6 +28,21 @@ public class EmployeeController {
         return  employeeService.getAllEmployees();
     }
 
+    @GetMapping("/employee/{id}/personal-details")
+    public PersonalDetails getPersonalDetails(@PathVariable Integer id) {
+        return employeeService.getPersonalDetails(id);
+    }
+
+    @PutMapping("/employee/{id}/personal-details")
+    public PersonalDetails updatePersonalDetails(@PathVariable Integer id, @RequestBody PersonalDetails details) {
+        return employeeService.updatePersonalDetails(id, details);
+    }
+
+    @GetMapping("/employee/{id}/salary-details")
+    public Double getSalaryDetails(@PathVariable Integer id) {
+        return employeeService.getSalaryDetails(id);
+    }
+
 
 
 

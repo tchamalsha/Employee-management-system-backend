@@ -32,5 +32,8 @@ public class UserServiceImpl {
         return (userRepository.getPassword(id)==password);
     }
 
+    public void resetPassword(String email, String newPassword) {
+        // Implement password reset logic
+    }
 
 }

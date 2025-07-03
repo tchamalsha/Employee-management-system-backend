@@ -33,6 +33,16 @@ public class EmployeeServiceImpl {
         return personalDetailsRepository.getPersonalDetails(id);
     }
 
+    public PersonalDetails updatePersonalDetails(Integer id, PersonalDetails details) {
+        // Implement update logic
+        return null;
+    }
+
+    public Double getSalaryDetails(Integer id) {
+        // Implement salary retrieval logic
+        return null;
+    }
+
 
 
 }

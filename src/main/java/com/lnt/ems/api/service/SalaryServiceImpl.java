@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.transaction.Transactional;
 import java.util.Date;
 
@@ -50,12 +51,17 @@ public class SalaryServiceImpl  {
     //calculate salary
     public Float calculateSalary(Integer id,Date date){
         Integer basicSalary = getBasicSalary(id);
+        Integer specialAllowance = getSpecialAllowance(id);
         Float otRate = getOtRate(id);
         SalaryData salaryData = getSalaryData(id,date);
 
         Float totalSalary = (basicSalary-(basicSalary/25 * salaryData.getNoPayDays())) + salaryData.getAttendanceBonus() +
-                (otRate*salaryData.getOverTimeHours());
+                (otRate*salaryData.getOverTimeHours()) + specialAllowance;
 
         return totalSalary;
+    }
+
+    public Integer getSpecialAllowance(Integer id){
+        return basicSalaryRepository.getSpecialAllowance(id);
     }
 }

@@ -29,9 +29,14 @@ public class UserController {
         userService.addUser(user);
     }
 
-    @GetMapping("/login")
-    public Boolean isLoginSuccess(@RequestBody User user){
+    @PostMapping("/login")
+    public Boolean login(@RequestBody User user){
         return userService.isLoginSuccess(user.getId(),user.getPassword());
+    }
+
+    @PostMapping("/password-reset")
+    public void resetPassword(@RequestParam String email, @RequestParam String newPassword) {
+        userService.resetPassword(email, newPassword);
     }
 
 }
