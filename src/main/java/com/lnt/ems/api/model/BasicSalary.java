@@ -8,14 +8,17 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-@Table(
-        uniqueConstraints = @UniqueConstraint(
-                columnNames = {"id"}
-        )
-)
+import javax.persistence.Column;
+import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(
+    name = "salary_details",
+    uniqueConstraints = @UniqueConstraint(
+            columnNames = {"id"}
+    )
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,8 +43,6 @@ public class BasicSalary {
         this.basicSalary = basicSalary;
     }
 
-
-
     private Integer basicSalary;
 
     public Float getOtRate() {
@@ -55,4 +56,16 @@ public class BasicSalary {
     private Float otRate;
 
     private Integer specialAllowance;
+
+    @NotNull
+    @Column(nullable = false)
+    private LocalDate date;
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 }

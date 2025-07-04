@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -43,6 +44,9 @@ public class EmployeeRegistrationRequest {
     @NotNull(message = "Special allowance is required")
     @Positive(message = "Special allowance must be positive")
     private Double specialAllowance;
+    
+    @NotNull(message = "Salary date is required")
+    private LocalDate salaryDate;
     
     // Personal details (optional)
     private String firstName;

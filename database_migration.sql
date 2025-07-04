@@ -66,6 +66,12 @@ ON DUPLICATE KEY UPDATE
     position = VALUES(position),
     role = VALUES(role);
 
+-- Step 7: Rename basic_salary table to salary_details
+RENAME TABLE IF EXISTS basic_salary TO salary_details;
+
+-- Step 8: Add salary_date column to salary_details
+ALTER TABLE salary_details ADD COLUMN salary_date DATE NOT NULL;
+
 -- Verification queries
 SELECT 'Admins count:' as info, COUNT(*) as count FROM admins;
 SELECT 'Employees count:' as info, COUNT(*) as count FROM employees;

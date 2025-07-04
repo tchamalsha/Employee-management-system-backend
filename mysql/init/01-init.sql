@@ -15,5 +15,5 @@ INSERT IGNORE INTO users (id, name, email, password, position, role, dtype)
 VALUES (2, 'John Doe', 'john.doe@company.com', 'password123', 'Software Engineer', 'EMPLOYEE', 'Employee');
 
 -- Sample salary data
-INSERT IGNORE INTO basic_salary (id, basic_salary, ot_rate, special_allowance) 
-VALUES (2, 50000, 1.5, 5000); 
+INSERT IGNORE INTO salary_details (id, basic_salary, ot_rate, special_allowance, salary_date) 
+VALUES (2, 50000, 1.5, 5000, '2024-01-01'); 

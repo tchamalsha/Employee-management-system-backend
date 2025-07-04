@@ -62,6 +62,7 @@ public class AdminServiceImpl  {
         basicSalary.setBasicSalary(request.getBasicSalary().intValue());
         basicSalary.setOtRate(request.getOtRate().floatValue());
         basicSalary.setSpecialAllowance(request.getSpecialAllowance().intValue());
+        basicSalary.setDate(request.getSalaryDate());
         basicSalaryRepository.save(basicSalary);
         
         // Create and save personal details if provided
