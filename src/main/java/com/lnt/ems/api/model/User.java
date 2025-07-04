@@ -4,19 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-@Table(
-        name = "users",
-        uniqueConstraints = @UniqueConstraint(
-                columnNames = {"id"}
-        )
-)
+import javax.persistence.*;
 
 @Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,12 +17,22 @@ public class User {
 
     @Id
     private Integer id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
     private String position;
+
+    @Column(nullable = false)
     private String role;
 
+    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -77,4 +80,4 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
-}
+} 

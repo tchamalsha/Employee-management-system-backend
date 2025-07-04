@@ -197,9 +197,21 @@ public class AdminController {
             // Pass admin ID to service for tracking who created the employee
             Employee employee = adminService.registerEmployee(request, adminId);
             return ResponseEntity.status(201).body(employee);
+        } catch (RuntimeException e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("already exists")) {
+                return ResponseEntity.status(409)
+                    .body("Error: " + errorMessage);
+            } else if (errorMessage.contains("not found")) {
+                return ResponseEntity.status(404)
+                    .body("Error: " + errorMessage);
+            } else {
+                return ResponseEntity.status(400)
+                    .body("Error registering employee: " + errorMessage);
+            }
         } catch (Exception e) {
-            return ResponseEntity.status(400)
-                .body("Error registering employee: " + e.getMessage());
+            return ResponseEntity.status(500)
+                .body("Internal server error: " + e.getMessage());
         }
     }
 

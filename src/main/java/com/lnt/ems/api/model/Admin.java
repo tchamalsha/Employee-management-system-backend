@@ -4,78 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
-@Table(
-    name = "admins",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id"}),
-        @UniqueConstraint(columnNames = {"email"})
-    }
-)
+@DiscriminatorValue("Admin")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Admin {
+public class Admin extends User {
 
-    @Id
-    private Integer id;
-    private String name;
-    private String email;
-    private String password;
-    private String position;
-    private String role = "ADMIN"; // Default role for admins
+    // Admin-specific fields can be added here if needed
+    // For now, Admin inherits all fields from User
 
-    // Getters and Setters
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    public Admin(Integer id, String name, String email, String password, String position) {
+        super(id, name, email, password, position, "ADMIN");
     }
 }

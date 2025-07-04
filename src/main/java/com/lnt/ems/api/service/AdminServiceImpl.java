@@ -43,6 +43,17 @@ public class AdminServiceImpl  {
 
     //register employee with salary details
     public Employee registerEmployee(EmployeeRegistrationRequest request, Integer adminId){
+        // Check if employee ID already exists
+        if (employeeRepository.findById(request.getId()).isPresent()) {
+            throw new RuntimeException("Employee with ID " + request.getId() + " already exists. Please use a different ID.");
+        }
+        
+        // Check if admin exists
+        Admin admin = adminRepository.findById(adminId).orElse(null);
+        if (admin == null) {
+            throw new RuntimeException("Admin with ID " + adminId + " not found.");
+        }
+        
         // Create employee
         Employee employee = new Employee();
         employee.setId(request.getId());
@@ -61,8 +72,7 @@ public class AdminServiceImpl  {
         basicSalary.setId(request.getId());
         basicSalary.setBasicSalary(request.getBasicSalary().intValue());
         basicSalary.setOtRate(request.getOtRate().floatValue());
-        basicSalary.setSpecialAllowance(request.getSpecialAllowance().intValue());
-        basicSalary.setDate(request.getSalaryDate());
+        basicSalary.setSpecialAllowance(request.getSpecialAllowance());
         basicSalaryRepository.save(basicSalary);
         
         // Create and save personal details if provided

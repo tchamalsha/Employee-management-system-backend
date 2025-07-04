@@ -8,9 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Column;
-import java.time.LocalDate;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(
@@ -43,8 +40,6 @@ public class BasicSalary {
         this.basicSalary = basicSalary;
     }
 
-    private Integer basicSalary;
-
     public Float getOtRate() {
         return otRate;
     }
@@ -53,19 +48,15 @@ public class BasicSalary {
         this.otRate = otRate;
     }
 
+    public Integer getSpecialAllowance() {
+        return specialAllowance;
+    }
+
+    public void setSpecialAllowance(Integer specialAllowance) {
+        this.specialAllowance = specialAllowance;
+    }
+
+    private Integer basicSalary;
     private Float otRate;
-
     private Integer specialAllowance;
-
-    @NotNull
-    @Column(name = "salary_date", nullable = false)
-    private LocalDate date;
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
 }

@@ -67,7 +67,11 @@ public class UserController {
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "Invalid user data or user already exists"
+            description = "Invalid user data"
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "User already exists"
         ),
         @ApiResponse(
             responseCode = "500",
@@ -78,8 +82,22 @@ public class UserController {
         @Parameter(description = "User object to register", required = true)
         @RequestBody User user
     ) {
-        userService.addUser(user);
-        return ResponseEntity.ok("User registered successfully");
+        try {
+            userService.addUser(user);
+            return ResponseEntity.ok("User registered successfully");
+        } catch (RuntimeException e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("already exists")) {
+                return ResponseEntity.status(409)
+                    .body("Error: " + errorMessage);
+            } else {
+                return ResponseEntity.status(400)
+                    .body("Error registering user: " + errorMessage);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                .body("Internal server error: " + e.getMessage());
+        }
     }
 
     @PostMapping("/login")
