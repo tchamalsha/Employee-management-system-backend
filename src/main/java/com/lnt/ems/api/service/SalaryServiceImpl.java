@@ -47,14 +47,22 @@ public class SalaryServiceImpl  {
         return basicSalaryRepository.getOtRate(id);
     }
 
+    //get special allowance
+    public Integer getSpecialAllowance(Integer id){
+        return basicSalaryRepository.getSpecialAllowance(id);
+    }
+
     //calculate salary
     public Float calculateSalary(Integer id,Date date){
         Integer basicSalary = getBasicSalary(id);
         Float otRate = getOtRate(id);
+        Integer specialAllowance = getSpecialAllowance(id);
         SalaryData salaryData = getSalaryData(id,date);
 
-        Float totalSalary = (basicSalary-(basicSalary/25 * salaryData.getNoPayDays())) + salaryData.getAttendanceBonus() +
-                (otRate*salaryData.getOverTimeHours());
+        Float totalSalary = (basicSalary-(basicSalary/25 * salaryData.getNoPayDays())) + 
+                           salaryData.getAttendanceBonus() + 
+                           (otRate*salaryData.getOverTimeHours()) + 
+                           specialAllowance;
 
         return totalSalary;
     }

@@ -58,7 +58,7 @@ public class BasicSalary {
     private Integer specialAllowance;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "salary_date", nullable = false)
     private LocalDate date;
 
     public LocalDate getDate() {
