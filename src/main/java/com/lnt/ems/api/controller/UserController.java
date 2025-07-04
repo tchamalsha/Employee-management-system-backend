@@ -5,11 +5,20 @@ import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.model.User;
 import com.lnt.ems.api.repository.UserRepository;
 import com.lnt.ems.api.service.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
+@Tag(name = "User Management", description = "APIs for user registration, authentication, and personal details")
 public class UserController {
 
     @Autowired
@@ -20,18 +29,88 @@ public class UserController {
     private UserServiceImpl userService;
 
     @PostMapping("/signup/personalDetails")
-    public void addPersonalDetails(@RequestBody PersonalDetails personalDetails){
+    @Operation(
+        summary = "Add personal details",
+        description = "Adds personal details for a user during registration"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Personal details added successfully"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid personal details data"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<String> addPersonalDetails(
+        @Parameter(description = "Personal details object", required = true)
+        @RequestBody PersonalDetails personalDetails
+    ){
         userService.addPersonalDetails(personalDetails);
+        return ResponseEntity.ok("Personal details added successfully");
     }
 
     @PostMapping("/signup")
-    public void addUser(@RequestBody User user) {
+    @Operation(
+        summary = "Register new user",
+        description = "Creates a new user account in the system"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User registered successfully"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid user data or user already exists"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<String> addUser(
+        @Parameter(description = "User object to register", required = true)
+        @RequestBody User user
+    ) {
         userService.addUser(user);
+        return ResponseEntity.ok("User registered successfully");
     }
 
-    @GetMapping("/login")
-    public Boolean isLoginSuccess(@RequestBody User user){
-        return userService.isLoginSuccess(user.getId(),user.getPassword());
+    @PostMapping("/login")
+    @Operation(
+        summary = "User login",
+        description = "Authenticates user credentials and returns login status"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Login attempt processed",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = Boolean.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid login credentials"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<Boolean> isLoginSuccess(
+        @Parameter(description = "User credentials", required = true)
+        @RequestBody User user
+    ){
+        Boolean loginSuccess = userService.isLoginSuccess(user.getId(), user.getPassword());
+        return ResponseEntity.ok(loginSuccess);
     }
 
 }

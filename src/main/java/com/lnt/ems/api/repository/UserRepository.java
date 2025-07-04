@@ -10,7 +10,7 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
     User findUserById(Integer id);
 
-    @Query("SELECT user.password from User user where user.password=?1")
+    @Query("SELECT user.password from User user where user.id=?1")
     String getPassword(Integer id);
 
 }
