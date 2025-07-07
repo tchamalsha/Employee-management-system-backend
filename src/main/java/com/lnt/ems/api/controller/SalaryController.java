@@ -1,6 +1,6 @@
 package com.lnt.ems.api.controller;
 
-import com.lnt.ems.api.model.BasicSalary;
+import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.service.SalaryServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,10 +51,10 @@ public class SalaryController {
         )
     })
     public ResponseEntity<String> addSalaryDetails(
-        @Parameter(description = "Basic salary object", required = true)
-        @RequestBody BasicSalary basicSalary
+        @Parameter(description = "Salary details object", required = true)
+        @RequestBody SalaryDetails salaryDetails
     ){
-        salaryService.setSalaryData(basicSalary);
+        salaryService.setSalaryData(salaryDetails);
         return ResponseEntity.ok("Salary details added successfully");
     }
 
@@ -66,15 +66,11 @@ public class SalaryController {
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Successfully retrieved salaries",
+            description = "Salary list retrieved successfully",
             content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = BasicSalary.class)
+                schema = @Schema(implementation = SalaryDetails.class)
             )
-        ),
-        @ApiResponse(
-            responseCode = "404",
-            description = "No salaries found"
         ),
         @ApiResponse(
             responseCode = "500",
@@ -82,7 +78,6 @@ public class SalaryController {
         )
     })
     public ResponseEntity<String> getAllSalaries(){
-        // This would need to be implemented in the service
         return ResponseEntity.ok("Salary list retrieved");
     }
 
@@ -94,22 +89,22 @@ public class SalaryController {
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Successfully retrieved salary",
+            description = "Salary information retrieved successfully",
             content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = BasicSalary.class)
+                schema = @Schema(implementation = SalaryDetails.class)
             )
         ),
         @ApiResponse(
             responseCode = "404",
-            description = "Salary not found for employee"
+            description = "Employee not found"
         ),
         @ApiResponse(
             responseCode = "500",
             description = "Internal server error"
         )
     })
-    public ResponseEntity<BasicSalary> getSalaryByEmployeeId(
+    public ResponseEntity<SalaryDetails> getSalaryByEmployeeId(
         @Parameter(description = "Employee ID", required = true)
         @PathVariable Integer employeeId
     ){

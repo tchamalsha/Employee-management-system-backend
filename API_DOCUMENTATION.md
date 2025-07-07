@@ -32,7 +32,8 @@ GET /employees
     "name": "John Doe",
     "email": "john.doe@company.com",
     "position": "Software Engineer",
-    "role": "EMPLOYEE"
+    "role": "EMPLOYEE",
+    "adminId": 1
   }
 ]
 ```
@@ -52,7 +53,8 @@ GET /employees/{id}
   "name": "John Doe",
   "email": "john.doe@company.com",
   "position": "Software Engineer",
-  "role": "EMPLOYEE"
+  "role": "EMPLOYEE",
+  "adminId": 1
 }
 ```
 
@@ -133,11 +135,9 @@ POST /signup/personalDetails
 ```json
 {
   "id": 1,
-  "firstName": "John",
-  "lastName": "Doe",
-  "dateOfBirth": "1990-01-01",
-  "phoneNumber": "+1234567890",
-  "address": "123 Main St, City, State 12345"
+  "telephone": 1234567890,
+  "address": "123 Main St, City, State",
+  "postalCode": 12345
 }
 ```
 
@@ -183,6 +183,47 @@ GET /admins
 ]
 ```
 
+#### Admin Login
+```http
+POST /admin/login
+```
+
+**Request Body:**
+```json
+{
+  "id": 1,
+  "password": "admin123"
+}
+```
+
+**Response:**
+```json
+true
+```
+
+#### Register Employee (Admin Only)
+```http
+POST /admin/register-employee
+```
+
+**Request Body:**
+```json
+{
+  "id": 1001,
+  "name": "John Doe",
+  "email": "john.doe@company.com",
+  "password": "password123",
+  "position": "Software Engineer",
+  "basicSalary": 50000.0,
+  "otRate": 1.5,
+  "specialAllowance": 5000,
+  "address": "123 Main St, City",
+  "phoneNumber": "+1-555-0123"
+}
+```
+
+**Response:** `201 Created` with employee details
+
 ### 4. Salary Management
 
 #### Add Salary Details
@@ -194,10 +235,9 @@ POST /signup/salaryDetails
 ```json
 {
   "id": 1,
-  "basicSalary": 50000.00,
-  "allowances": 5000.00,
-  "bonus": 2000.00,
-  "effectiveDate": "2024-01-01"
+  "basicSalary": 50000,
+  "otRate": 1.5,
+  "specialAllowance": 5000
 }
 ```
 
@@ -224,10 +264,35 @@ GET /salaries/{employeeId}
 ```json
 {
   "id": 1,
-  "basicSalary": 50000.00,
-  "allowances": 5000.00,
-  "bonus": 2000.00,
-  "effectiveDate": "2024-01-01"
+  "basicSalary": 50000,
+  "otRate": 1.5,
+  "specialAllowance": 5000
+}
+```
+
+#### Calculate Salary
+```http
+POST /salary/calculate
+```
+
+**Request Body:**
+```json
+{
+  "employeeId": 1,
+  "date": "2024-01-01"
+}
+```
+
+**Response:**
+```json
+{
+  "employeeId": 1,
+  "date": "2024-01-01",
+  "basicSalary": 50000,
+  "noPayDeduction": 4000,
+  "attendanceBonus": 1000,
+  "overtimePay": 3750,
+  "totalSalary": 50750
 }
 ```
 
@@ -253,7 +318,8 @@ GET /salaries/{employeeId}
   "email": "string",
   "password": "string",
   "position": "string",
-  "role": "string"
+  "role": "string",
+  "adminId": "integer"
 }
 ```
 
@@ -273,24 +339,72 @@ GET /salaries/{employeeId}
 ```json
 {
   "id": "integer",
+  "telephone": "long",
+  "address": "string",
+  "postalCode": "integer"
+}
+```
+
+### SalaryDetails
+```json
+{
+  "id": "integer",
+  "basicSalary": "integer",
+  "otRate": "float",
+  "specialAllowance": "integer"
+}
+```
+
+### SalaryData
+```json
+{
+  "id": "integer",
+  "date": "date",
+  "noPayDays": "float",
+  "overTimeHours": "float",
+  "attendanceBonus": "integer"
+}
+```
+
+### Salary
+```json
+{
+  "id": "integer",
+  "date": "date",
+  "salaryAmount": "float"
+}
+```
+
+### EmployeeRegistrationRequest
+```json
+{
+  "id": "integer",
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "position": "string",
+  "basicSalary": "double",
+  "otRate": "double",
+  "specialAllowance": "double",
   "firstName": "string",
   "lastName": "string",
-  "dateOfBirth": "date",
   "phoneNumber": "string",
   "address": "string"
 }
 ```
 
-### BasicSalary
-```json
-{
-  "id": "integer",
-  "basicSalary": "decimal",
-  "allowances": "decimal",
-  "bonus": "decimal",
-  "effectiveDate": "date"
-}
+## Salary Calculation Formula
+
+The system calculates salary using the following formula:
+
 ```
+Total Salary = (Basic Salary - No-Pay Deduction) + Attendance Bonus + Overtime Pay
+```
+
+Where:
+- **No-Pay Deduction** = `(Basic Salary ÷ 25) × No-Pay Days`
+- **Attendance Bonus** = Fixed amount for good attendance
+- **Overtime Pay** = `OT Rate × Overtime Hours`
 
 ## HTTP Status Codes
 
@@ -298,6 +412,7 @@ GET /salaries/{employeeId}
 - `201 Created` - Resource created successfully
 - `204 No Content` - Request successful, no content to return
 - `400 Bad Request` - Invalid request data
+- `401 Unauthorized` - Authentication required
 - `404 Not Found` - Resource not found
 - `409 Conflict` - Resource already exists
 - `500 Internal Server Error` - Server error
@@ -332,6 +447,36 @@ Interactive API documentation is available at:
 
 ## Examples
 
+### Complete Employee Registration Flow (Admin)
+
+1. **Admin Login:**
+```bash
+curl -X POST http://localhost:8089/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": 1,
+    "password": "admin123"
+  }'
+```
+
+2. **Register Employee:**
+```bash
+curl -X POST http://localhost:8089/admin/register-employee \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": 1001,
+    "name": "John Doe",
+    "email": "john.doe@company.com",
+    "password": "password123",
+    "position": "Software Engineer",
+    "basicSalary": 50000.0,
+    "otRate": 1.5,
+    "specialAllowance": 5000,
+    "address": "123 Main St, City",
+    "phoneNumber": "+1-555-0123"
+  }'
+```
+
 ### Complete User Registration Flow
 
 1. **Register User:**
@@ -354,11 +499,9 @@ curl -X POST http://localhost:8089/signup/personalDetails \
   -H "Content-Type: application/json" \
   -d '{
     "id": 1,
-    "firstName": "John",
-    "lastName": "Doe",
-    "dateOfBirth": "1990-01-01",
-    "phoneNumber": "+1234567890",
-    "address": "123 Main St, City, State 12345"
+    "telephone": 1234567890,
+    "address": "123 Main St, City, State",
+    "postalCode": 12345
   }'
 ```
 
@@ -368,10 +511,9 @@ curl -X POST http://localhost:8089/signup/salaryDetails \
   -H "Content-Type: application/json" \
   -d '{
     "id": 1,
-    "basicSalary": 50000.00,
-    "allowances": 5000.00,
-    "bonus": 2000.00,
-    "effectiveDate": "2024-01-01"
+    "basicSalary": 50000,
+    "otRate": 1.5,
+    "specialAllowance": 5000
   }'
 ```
 
@@ -384,6 +526,21 @@ curl -X POST http://localhost:8089/login \
     "password": "password123"
   }'
 ```
+
+## Database Schema
+
+### Tables
+- **admins** - Admin users
+- **employees** - Employee users with admin_id foreign key
+- **personal_details** - Employee contact information
+- **salary_details** - Basic salary configuration
+- **salary** - Monthly salary records
+- **salary_data** - Detailed salary components
+
+### Relationships
+- Employees are linked to admins via `admin_id`
+- All salary-related tables are linked to employees via `id`
+- Personal details are linked to employees via `id`
 
 ## Support
 

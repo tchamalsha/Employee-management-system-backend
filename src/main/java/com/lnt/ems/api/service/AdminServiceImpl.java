@@ -2,11 +2,11 @@ package com.lnt.ems.api.service;
 
 import com.lnt.ems.api.dto.EmployeeRegistrationRequest;
 import com.lnt.ems.api.model.Admin;
-import com.lnt.ems.api.model.BasicSalary;
+import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.Employee;
 import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.repository.AdminRepository;
-import com.lnt.ems.api.repository.BasicSalaryRepository;
+import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.EmployeeRepository;
 import com.lnt.ems.api.repository.PersonalDetailsRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class AdminServiceImpl  {
 
     private final AdminRepository adminRepository;
     private final EmployeeRepository employeeRepository;
-    private final BasicSalaryRepository basicSalaryRepository;
+    private final SalaryDetailsRepository salaryDetailsRepository;
     private final PersonalDetailsRepository personalDetailsRepository;
 
     //get all admins
@@ -57,12 +57,12 @@ public class AdminServiceImpl  {
         Employee savedEmployee = employeeRepository.save(employee);
         
         // Create and save salary details
-        BasicSalary basicSalary = new BasicSalary();
-        basicSalary.setId(request.getId());
-        basicSalary.setBasicSalary(request.getBasicSalary().intValue());
-        basicSalary.setOtRate(request.getOtRate().floatValue());
-        basicSalary.setSpecialAllowance(request.getSpecialAllowance().intValue());
-        basicSalaryRepository.save(basicSalary);
+        SalaryDetails salaryDetails = new SalaryDetails();
+        salaryDetails.setId(request.getId());
+        salaryDetails.setBasicSalary(request.getBasicSalary().intValue());
+        salaryDetails.setOtRate(request.getOtRate().floatValue());
+        salaryDetails.setSpecialAllowance(request.getSpecialAllowance().intValue());
+        salaryDetailsRepository.save(salaryDetails);
         
         // Create and save personal details if provided
         if (request.getAddress() != null && !request.getAddress().isEmpty()) {

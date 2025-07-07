@@ -1,8 +1,8 @@
 package com.lnt.ems.api.service;
 
-import com.lnt.ems.api.model.BasicSalary;
+import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.SalaryData;
-import com.lnt.ems.api.repository.BasicSalaryRepository;
+import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.SalaryDataRepository;
 import com.lnt.ems.api.repository.SalaryRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,12 @@ import java.util.Date;
 public class SalaryServiceImpl  {
 
     private final SalaryRepository salaryRepository;
-    private final BasicSalaryRepository basicSalaryRepository;
+    private final SalaryDetailsRepository salaryDetailsRepository;
     private final SalaryDataRepository salaryDataRepository;
 
     //add salary
-    public void setSalaryData(BasicSalary basicSalary){
-        basicSalaryRepository.save(basicSalary);
+    public void setSalaryData(SalaryDetails salaryDetails){
+        salaryDetailsRepository.save(salaryDetails);
     }
     //get salary of an employee
     public Float getSalary(Integer id, Date date){
@@ -39,12 +39,12 @@ public class SalaryServiceImpl  {
 
     //get basic salary
     public Integer getBasicSalary(Integer id){
-        return  basicSalaryRepository.getBasicSalary(id);
+        return  salaryDetailsRepository.getBasicSalary(id);
     }
 
     //get OT rate
     public Float getOtRate(Integer id){
-        return basicSalaryRepository.getOtRate(id);
+        return salaryDetailsRepository.getOtRate(id);
     }
 
     //calculate salary
