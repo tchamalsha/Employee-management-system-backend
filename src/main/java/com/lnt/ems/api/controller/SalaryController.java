@@ -71,7 +71,7 @@ public class SalaryController {
             description = "Salary list retrieved successfully",
             content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = SalaryDetails.class)
+                schema = @Schema(implementation = Salary.class)
             )
         ),
         @ApiResponse(
@@ -79,8 +79,9 @@ public class SalaryController {
             description = "Internal server error"
         )
     })
-    public ResponseEntity<String> getAllSalaries(){
-        return ResponseEntity.ok("Salary list retrieved");
+    public ResponseEntity<java.util.List<Salary>> getAllSalaries(){
+        java.util.List<Salary> salaries = salaryService.getAllSalaries();
+        return ResponseEntity.ok(salaries);
     }
 
     @GetMapping("/salaries/{employeeId}")
@@ -94,7 +95,7 @@ public class SalaryController {
             description = "Salary information retrieved successfully",
             content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = SalaryDetails.class)
+                schema = @Schema(implementation = Salary.class)
             )
         ),
         @ApiResponse(
@@ -106,12 +107,15 @@ public class SalaryController {
             description = "Internal server error"
         )
     })
-    public ResponseEntity<SalaryDetails> getSalaryByEmployeeId(
+    public ResponseEntity<java.util.List<Salary>> getSalariesByEmployeeId(
         @Parameter(description = "Employee ID", required = true)
         @PathVariable Integer employeeId
     ){
-        // This would need to be implemented in the service
-        return ResponseEntity.ok().build();
+        java.util.List<Salary> salaries = salaryService.getSalariesByEmployeeId(employeeId);
+        if (salaries == null || salaries.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(salaries);
     }
 
     @PostMapping("/calculate-salary/{employeeId}/{date}")

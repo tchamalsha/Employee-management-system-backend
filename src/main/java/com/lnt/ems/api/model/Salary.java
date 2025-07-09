@@ -34,4 +34,20 @@ public class Salary {
         public void setSalaryAmount(Float salary) {
                 this.salaryAmount = salary;
         }
+
+        public Integer getId() {
+                return id;
+        }
+
+        public void setId(Integer id) {
+                this.id = id;
+        }
+
+        public Date getDate() {
+                return date;
+        }
+
+        public void setDate(Date date) {
+                this.date = date;
+        }
 }

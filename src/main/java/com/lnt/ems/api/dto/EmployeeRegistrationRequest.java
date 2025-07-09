@@ -49,4 +49,18 @@ public class EmployeeRegistrationRequest {
     private String lastName;
     private String phoneNumber;
     private String address;
+
+    // Manual getter methods
+    public Integer getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
+    public String getPosition() { return position; }
+    public Double getBasicSalary() { return basicSalary; }
+    public Double getOtRate() { return otRate; }
+    public Double getSpecialAllowance() { return specialAllowance; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public String getAddress() { return address; }
 } 

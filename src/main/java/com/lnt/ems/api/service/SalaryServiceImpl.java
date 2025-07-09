@@ -33,6 +33,16 @@ public class SalaryServiceImpl  {
         return salaryRepository.getEmployeeSalary(date,id);
     }
 
+    //get all salaries
+    public java.util.List<Salary> getAllSalaries() {
+        return salaryRepository.findAll();
+    }
+
+    //get all salaries for a specific employee
+    public java.util.List<Salary> getSalariesByEmployeeId(Integer employeeId) {
+        return salaryRepository.findAllById(employeeId);
+    }
+
     //get employee salary data
     public SalaryData getSalaryData(Integer id,Date date){
         return salaryDataRepository.getSalaryData(id,date);
@@ -81,39 +91,9 @@ public class SalaryServiceImpl  {
     public SalaryData addSalaryData(SalaryData salaryData){
         // Save the salary data first
         SalaryData savedSalaryData = salaryDataRepository.save(salaryData);
-        
-        // Wait and verify that salary data is stored
-        int maxRetries = 5;
-        int retryCount = 0;
-        boolean dataStored = false;
-        
-        while (retryCount < maxRetries && !dataStored) {
-            try {
-                Thread.sleep(1000); // Wait 1 second
-                SalaryData verifiedData = salaryDataRepository.getSalaryData(savedSalaryData.getId(), savedSalaryData.getDate());
-                if (verifiedData != null) {
-                    dataStored = true;
-                    log.info("Salary data confirmed stored for employee {} on date {}", 
-                            savedSalaryData.getId(), savedSalaryData.getDate());
-                } else {
-                    retryCount++;
-                    log.warn("Salary data not found, retry {}/{} for employee {} on date {}", 
-                            retryCount, maxRetries, savedSalaryData.getId(), savedSalaryData.getDate());
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                log.error("Thread interrupted while waiting for salary data storage");
-                break;
-            } catch (Exception e) {
-                retryCount++;
-                log.error("Error verifying salary data storage, retry {}/{}: {}", 
-                         retryCount, maxRetries, e.getMessage());
-            }
-        }
-        
-        if (!dataStored) {
-            log.error("Failed to confirm salary data storage after {} retries for employee {} on date {}", 
-                     maxRetries, savedSalaryData.getId(), savedSalaryData.getDate());
+        if(salaryDataExists(salaryData.getId(), salaryData.getDate())){
+            log.info("Salary data found for employee {} on date {}", 
+                    salaryData.getId(), salaryData.getDate());
         }
         
         // Automatically calculate and save the salary using the date from salary data

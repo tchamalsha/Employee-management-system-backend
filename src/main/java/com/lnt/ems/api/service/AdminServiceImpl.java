@@ -9,23 +9,37 @@ import com.lnt.ems.api.repository.AdminRepository;
 import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.EmployeeRepository;
 import com.lnt.ems.api.repository.PersonalDetailsRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class AdminServiceImpl  {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     private final AdminRepository adminRepository;
     private final EmployeeRepository employeeRepository;
     private final SalaryDetailsRepository salaryDetailsRepository;
     private final PersonalDetailsRepository personalDetailsRepository;
+
+    @Autowired
+    public AdminServiceImpl(AdminRepository adminRepository,
+                            EmployeeRepository employeeRepository,
+                            SalaryDetailsRepository salaryDetailsRepository,
+                            PersonalDetailsRepository personalDetailsRepository) {
+        this.adminRepository = adminRepository;
+        this.employeeRepository = employeeRepository;
+        this.salaryDetailsRepository = salaryDetailsRepository;
+        this.personalDetailsRepository = personalDetailsRepository;
+    }
 
     //get all admins
     public List<Admin> getAllAdmins(){
