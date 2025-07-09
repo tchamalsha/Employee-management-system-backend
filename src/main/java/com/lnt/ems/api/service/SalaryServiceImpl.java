@@ -2,6 +2,7 @@ package com.lnt.ems.api.service;
 
 import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.SalaryData;
+import com.lnt.ems.api.model.Salary;
 import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.SalaryDataRepository;
 import com.lnt.ems.api.repository.SalaryRepository;
@@ -47,15 +48,120 @@ public class SalaryServiceImpl  {
         return salaryDetailsRepository.getOtRate(id);
     }
 
+   
+
     //calculate salary
     public Float calculateSalary(Integer id,Date date){
         Integer basicSalary = getBasicSalary(id);
         Float otRate = getOtRate(id);
         SalaryData salaryData = getSalaryData(id,date);
 
-        Float totalSalary = (basicSalary-(basicSalary/25 * salaryData.getNoPayDays())) + salaryData.getAttendanceBonus() +
-                (otRate*salaryData.getOverTimeHours());
+        // Use default values if salaryData is null
+        Float noPayDays = (salaryData != null) ? salaryData.getNoPayDays() : 0.0f;
+        Integer attendanceBonus = (salaryData != null) ? salaryData.getAttendanceBonus() : 0;
+        Float overTimeHours = (salaryData != null) ? salaryData.getOverTimeHours() : 0.0f;
+
+        Float totalSalary = (basicSalary-(basicSalary/25 * noPayDays)) + attendanceBonus +
+                (otRate*overTimeHours);
 
         return totalSalary;
+    }
+
+    //calculate and save salary
+    public Salary calculateAndSaveSalary(Integer id, Date date){
+        Float calculatedSalary = calculateSalary(id, date);
+        Salary salary = new Salary();
+        salary.setId(id);
+        salary.setDate(date);
+        salary.setSalaryAmount(calculatedSalary);
+        return salaryRepository.save(salary);
+    }
+
+    //add salary data
+    public SalaryData addSalaryData(SalaryData salaryData){
+        // Save the salary data first
+        SalaryData savedSalaryData = salaryDataRepository.save(salaryData);
+        
+        // Wait and verify that salary data is stored
+        int maxRetries = 5;
+        int retryCount = 0;
+        boolean dataStored = false;
+        
+        while (retryCount < maxRetries && !dataStored) {
+            try {
+                Thread.sleep(1000); // Wait 1 second
+                SalaryData verifiedData = salaryDataRepository.getSalaryData(savedSalaryData.getId(), savedSalaryData.getDate());
+                if (verifiedData != null) {
+                    dataStored = true;
+                    log.info("Salary data confirmed stored for employee {} on date {}", 
+                            savedSalaryData.getId(), savedSalaryData.getDate());
+                } else {
+                    retryCount++;
+                    log.warn("Salary data not found, retry {}/{} for employee {} on date {}", 
+                            retryCount, maxRetries, savedSalaryData.getId(), savedSalaryData.getDate());
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("Thread interrupted while waiting for salary data storage");
+                break;
+            } catch (Exception e) {
+                retryCount++;
+                log.error("Error verifying salary data storage, retry {}/{}: {}", 
+                         retryCount, maxRetries, e.getMessage());
+            }
+        }
+        
+        if (!dataStored) {
+            log.error("Failed to confirm salary data storage after {} retries for employee {} on date {}", 
+                     maxRetries, savedSalaryData.getId(), savedSalaryData.getDate());
+        }
+        
+        // Automatically calculate and save the salary using the date from salary data
+        try {
+            calculateAndSaveSalary(salaryData.getId(), salaryData.getDate());
+            log.info("Salary calculation completed for employee {} on date {}", 
+                    salaryData.getId(), salaryData.getDate());
+        } catch (Exception e) {
+            // Log the error but don't fail the salary data save operation
+            log.error("Error calculating salary for employee {} on date {}: {}", 
+                     salaryData.getId(), salaryData.getDate(), e.getMessage());
+        }
+        
+        return savedSalaryData;
+    }
+
+    // Check if salary data exists for given employee and date
+    public boolean salaryDataExists(Integer employeeId, Date date) {
+        try {
+            SalaryData data = salaryDataRepository.getSalaryData(employeeId, date);
+            return data != null;
+        } catch (Exception e) {
+            log.error("Error checking salary data existence for employee {} on date {}: {}", 
+                     employeeId, date, e.getMessage());
+            return false;
+        }
+    }
+
+    // Wait for salary data to be available
+    public boolean waitForSalaryData(Integer employeeId, Date date, int maxWaitSeconds) {
+        int waitCount = 0;
+        while (waitCount < maxWaitSeconds) {
+            if (salaryDataExists(employeeId, date)) {
+                log.info("Salary data found for employee {} on date {} after {} seconds", 
+                        employeeId, date, waitCount);
+                return true;
+            }
+            try {
+                Thread.sleep(1000); // Wait 1 second
+                waitCount++;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("Thread interrupted while waiting for salary data");
+                break;
+            }
+        }
+        log.warn("Salary data not found for employee {} on date {} after {} seconds", 
+                employeeId, date, maxWaitSeconds);
+        return false;
     }
 }

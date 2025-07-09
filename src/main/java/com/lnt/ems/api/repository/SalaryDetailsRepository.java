@@ -14,4 +14,7 @@ public interface SalaryDetailsRepository extends JpaRepository<SalaryDetails,Int
     @Query("SELECT bs.otRate FROM SalaryDetails bs WHERE bs.id=?1")
     Float getOtRate(Integer id);
 
+    @Query("SELECT bs.specialAllowance FROM SalaryDetails bs WHERE bs.id=?1")
+    Float getSpecialAllowance(Integer id);
+
 }

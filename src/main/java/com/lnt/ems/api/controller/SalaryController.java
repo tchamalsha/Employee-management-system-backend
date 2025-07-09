@@ -2,6 +2,8 @@ package com.lnt.ems.api.controller;
 
 import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.PersonalDetails;
+import com.lnt.ems.api.model.Salary;
+import com.lnt.ems.api.model.SalaryData;
 import com.lnt.ems.api.service.SalaryServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -110,5 +112,84 @@ public class SalaryController {
     ){
         // This would need to be implemented in the service
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/calculate-salary/{employeeId}/{date}")
+    @Operation(
+        summary = "Calculate and save salary",
+        description = "Calculates salary for an employee based on their details and saves it to the database"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Salary calculated and saved successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = Salary.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid employee data or missing salary information"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Employee not found"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<Salary> calculateAndSaveSalary(
+        @Parameter(description = "Employee ID", required = true)
+        @PathVariable Integer employeeId,
+        @Parameter(description = "Date for salary calculation", required = true)
+        @PathVariable String date
+    ){
+        try {
+            // Parse date string to Date object
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = sdf.parse(date);
+            Salary savedSalary = salaryService.calculateAndSaveSalary(employeeId, parsedDate);
+            return ResponseEntity.ok(savedSalary);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/salarydata")
+    @Operation(
+        summary = "Add salary data",
+        description = "Adds attendance and overtime data for salary calculation"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Salary data added successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = SalaryData.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid salary data"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<SalaryData> addSalaryData(
+        @Parameter(description = "Salary data object", required = true)
+        @RequestBody SalaryData salaryData
+    ){
+        try {
+            SalaryData savedSalaryData = salaryService.addSalaryData(salaryData);
+            return ResponseEntity.ok(savedSalaryData);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

@@ -270,31 +270,58 @@ GET /salaries/{employeeId}
 }
 ```
 
-#### Calculate Salary
+#### Calculate and Save Salary
 ```http
-POST /salary/calculate
+POST /calculate-salary
 ```
 
 **Request Body:**
 ```json
 {
   "employeeId": 1,
-  "date": "2024-01-01"
+  "date": "2024-01-15"
 }
 ```
 
 **Response:**
 ```json
 {
-  "employeeId": 1,
-  "date": "2024-01-01",
-  "basicSalary": 50000,
-  "noPayDeduction": 4000,
-  "attendanceBonus": 1000,
-  "overtimePay": 3750,
-  "totalSalary": 50750
+  "id": 1,
+  "date": "2024-01-15T00:00:00.000+00:00",
+  "salaryAmount": 52000.0
 }
 ```
+
+#### Add Salary Data (with Auto-Calculation)
+```http
+POST /salarydata
+```
+
+**Request Body:**
+```json
+{
+  "id": 1,
+  "date": "2024-01-15",
+  "noPayDays": 2.0,
+  "overTimeHours": 10.0,
+  "attendanceBonus": 1000
+}
+```
+
+**Description:** This endpoint adds attendance and overtime data, then automatically calculates and saves the salary.
+
+**Response:**
+```json
+{
+  "id": 1,
+  "date": "2024-01-15T00:00:00.000+00:00",
+  "noPayDays": 2.0,
+  "overTimeHours": 10.0,
+  "attendanceBonus": 1000
+}
+```
+
+**Note:** This endpoint automatically triggers salary calculation and saves the result to the salary table.
 
 ## Data Models
 
@@ -393,18 +420,42 @@ POST /salary/calculate
 }
 ```
 
+### SalaryCalculationRequest
+```json
+{
+  "employeeId": "integer",
+  "date": "date"
+}
+```
+
 ## Salary Calculation Formula
 
 The system calculates salary using the following formula:
 
 ```
-Total Salary = (Basic Salary - No-Pay Deduction) + Attendance Bonus + Overtime Pay
+Total Salary = (Basic Salary - No-Pay Deduction) + Attendance Bonus + Overtime Pay + Special Allowance
 ```
 
 Where:
 - **No-Pay Deduction** = `(Basic Salary ÷ 25) × No-Pay Days`
 - **Attendance Bonus** = Fixed amount for good attendance
 - **Overtime Pay** = `OT Rate × Overtime Hours`
+- **Special Allowance** = Fixed monthly allowance
+
+### Example Calculation:
+- Basic Salary: 50,000
+- No-Pay Days: 2
+- Attendance Bonus: 1,000
+- Overtime Hours: 10
+- OT Rate: 100
+- Special Allowance: 5,000
+
+**Calculation:**
+```
+No-Pay Deduction = (50,000 ÷ 25) × 2 = 2,000 × 2 = 4,000
+Overtime Pay = 100 × 10 = 1,000
+Total Salary = (50,000 - 4,000) + 1,000 + 1,000 + 5,000 = 53,000
+```
 
 ## HTTP Status Codes
 
@@ -512,7 +563,7 @@ curl -X POST http://localhost:8089/signup/salaryDetails \
   -d '{
     "id": 1,
     "basicSalary": 50000,
-    "otRate": 1.5,
+    "otRate": 100.0,
     "specialAllowance": 5000
   }'
 ```
@@ -525,6 +576,41 @@ curl -X POST http://localhost:8089/login \
     "id": 1,
     "password": "password123"
   }'
+```
+
+### Complete Salary Management Flow
+
+1. **Add Salary Data (with Auto-Calculation):**
+```bash
+curl -X POST http://localhost:8089/salarydata \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": 1,
+    "date": "2024-01-15",
+    "noPayDays": 2.0,
+    "overTimeHours": 10.0,
+    "attendanceBonus": 1000
+  }'
+```
+
+2. **Calculate Salary Manually (Alternative):**
+```bash
+curl -X POST http://localhost:8089/calculate-salary \
+  -H "Content-Type: application/json" \
+  -d '{
+    "employeeId": 1,
+    "date": "2024-01-15"
+  }'
+```
+
+3. **Get Salary Information:**
+```bash
+curl -X GET http://localhost:8089/salaries/1
+```
+
+4. **Get All Salaries:**
+```bash
+curl -X GET http://localhost:8089/salaries
 ```
 
 ## Database Schema
