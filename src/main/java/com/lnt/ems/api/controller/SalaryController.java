@@ -61,7 +61,7 @@ public class SalaryController {
         }
     }
 
-    @PostMapping("/user/salary")
+    @PostMapping("/user/salary/all")
     public java.util.List<Salary> getAllSalaries(@RequestBody SalaryIdRequest request) {
         if (request.getId() == null) {
             return java.util.Collections.emptyList();
@@ -69,7 +69,7 @@ public class SalaryController {
         return salaryService.getAllSalaries(request.getId());
     }
 
-    @PostMapping("user/salaries")
+    @PostMapping("/user/salaries/by-date")
     public java.util.List<Salary> getAllSalariesByDate(@RequestBody SalaryDateRequest request) {
         if (request.getDate() == null) {
             return java.util.Collections.emptyList();
