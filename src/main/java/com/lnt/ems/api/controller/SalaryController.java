@@ -6,8 +6,10 @@ import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.service.SalaryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,18 +24,40 @@ public class SalaryController {
     }
 
     @PostMapping("/signup/user/salaryDetails")
-    public void addSalaryDetails(@RequestBody SalaryDetails salaryDetails){
-        salaryService.setSalaryData(salaryDetails);
+    public String addSalaryDetails(@RequestBody SalaryDetails salaryDetails){
+        SalaryDetails savedDetails = salaryService.setSalaryData(salaryDetails);
+        return "Salary details successfully saved for ID: " + savedDetails.getId() + 
+               ", Basic Salary: " + savedDetails.getBasicSalary() + 
+               ", OT Rate: " + savedDetails.getOtRate() + 
+               ", Special Allowance: " + savedDetails.getSpecialAllowance();
     }
 
     @PostMapping("/signup/user/salaryData")
-    public void addSalaryData(@RequestBody SalaryData salaryData){
-        salaryService.addSalaryData(salaryData);
+    public String addSalaryData(@RequestBody SalaryData salaryData){
+        SalaryData savedData = salaryService.addSalaryData(salaryData);
+        return "Salary data successfully saved for ID: " + savedData.getId() + 
+               ", Date: " + savedData.getDate() + 
+               ", No Pay Days: " + savedData.getNoPayDays() + 
+               ", Overtime Hours: " + savedData.getOverTimeHours() + 
+               ", Attendance Bonus: " + savedData.getAttendanceBonus();
     }
 
-    @PostMapping("/calculate-salary")
+    @PostMapping("/user/calculate-salary")
     public Float calculateSalary(@RequestBody SalaryCalculationRequest request){
         return salaryService.calculateAndSaveSalary(request.getId(), request.getDate());
+    }
+
+    @PostMapping("/user/salary")
+    public String getSalary(@RequestBody SalaryRequest request) {
+        if (request.getId() == null || request.getDate() == null) {
+            return "Error: Both 'id' and 'date' fields are required in the request body. Example: {\"id\":123,\"date\":\"2024-01\"}";
+        }
+        Float salary = salaryService.getSalary(request.getId(), request.getDate());
+        if (salary != null) {
+            return "Salary for ID " + request.getId() + " on " + request.getDate() + ": " + salary;
+        } else {
+            return "No salary found for ID " + request.getId() + " on " + request.getDate();
+        }
     }
 
     // Inner class for salary calculation request
@@ -53,6 +77,25 @@ public class SalaryController {
             return date;
         }
 
+        public void setDate(String date) {
+            this.date = date;
+        }
+    }
+
+    // Inner class for salary request
+    public static class SalaryRequest {
+        private Integer id;
+        private String date;
+
+        public Integer getId() {
+            return id;
+        }
+        public void setId(Integer id) {
+            this.id = id;
+        }
+        public String getDate() {
+            return date;
+        }
         public void setDate(String date) {
             this.date = date;
         }

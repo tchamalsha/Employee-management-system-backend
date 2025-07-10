@@ -26,7 +26,6 @@ public class Admin {
     private String email;
     private String password;
     private String position;
-    private String role;
 
     public Integer getId() {
         return id;
@@ -66,13 +65,5 @@ public class Admin {
 
     public void setPosition(String position) {
         this.position = position;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

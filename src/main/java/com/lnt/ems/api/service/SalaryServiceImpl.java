@@ -27,13 +27,13 @@ public class SalaryServiceImpl  {
     }
 
     //add salary details
-    public void setSalaryData(SalaryDetails salaryDetails){
-        salaryDetailsRepository.save(salaryDetails);
+    public SalaryDetails setSalaryData(SalaryDetails salaryDetails){
+        return salaryDetailsRepository.save(salaryDetails);
     }
     
     //add salary data
-    public void addSalaryData(SalaryData salaryData){
-        salaryDataRepository.save(salaryData);
+    public SalaryData addSalaryData(SalaryData salaryData){
+        return salaryDataRepository.save(salaryData);
     }
     
     //get salary of an employee

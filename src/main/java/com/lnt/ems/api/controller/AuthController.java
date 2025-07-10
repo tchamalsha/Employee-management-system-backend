@@ -24,30 +24,71 @@ public class AuthController {
     private AdminRepository adminRepository;
     private EmployeeRepository employeeRepository;
 
-    @PostMapping("/signup/personalDetails")
-    public void addPersonalDetails(@RequestBody PersonalDetails personalDetails){
-        personalDetailsService.addPersonalDetails(personalDetails);
+    @PostMapping("/signup/user/personalDetails")
+    public String addPersonalDetails(@RequestBody PersonalDetails personalDetails){
+        PersonalDetails savedDetails = personalDetailsService.addPersonalDetails(personalDetails);
+        return "Personal details successfully saved for ID: " + savedDetails.getId() + 
+               ", Address: " + savedDetails.getAddress() + 
+               ", Telephone: " + savedDetails.getTelephone() + 
+               ", Postal Code: " + savedDetails.getPostalCode();
     }
 
     @PostMapping("/signup/admin")
-    public void addAdmin(@RequestBody Admin admin) {
-        adminRepository.save(admin);
+    public String addAdmin(@RequestBody Admin admin) {
+       Admin existingAdmin = adminRepository.findAdminById(admin.getId());
+       if (existingAdmin != null) {
+           return "Admin with ID " + admin.getId() + " already registered";
+       }
+       adminRepository.save(admin);
+       return "Admin successfully registered";
     }
 
     @PostMapping("/signup/employee")
-    public void addEmployee(@RequestBody Employee employee) {
+    public String addEmployee(@RequestBody Employee employee) {
+        Employee existingEmployee = employeeRepository.findEmployeeById(employee.getId());
+        if (existingEmployee != null) {
+            return "Employee with ID " + employee.getId() + " already registered";
+        }
         employeeRepository.save(employee);
+        return "Employee successfully registered";
     }
 
-    @GetMapping("/login/admin")
-    public Boolean isAdminLoginSuccess(@RequestBody Admin admin){
-        Admin foundAdmin = adminRepository.findAdminById(admin.getId());
-        return foundAdmin != null && foundAdmin.getPassword().equals(admin.getPassword());
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest request){
+        // Try admin login first
+        Admin foundAdmin = adminRepository.findAdminById(request.getId());
+        if (foundAdmin != null && foundAdmin.getPassword().equals(request.getPassword())) {
+            return "Admin login successful";
+        }
+        
+        // Try employee login
+        Employee foundEmployee = employeeRepository.findEmployeeById(request.getId());
+        if (foundEmployee != null && foundEmployee.getPassword().equals(request.getPassword())) {
+            return "Employee login successful";
+        }
+        
+        return "Login failed - Invalid credentials";
     }
 
-    @GetMapping("/login/employee")
-    public Boolean isEmployeeLoginSuccess(@RequestBody Employee employee){
-        Employee foundEmployee = employeeRepository.findEmployeeById(employee.getId());
-        return foundEmployee != null && foundEmployee.getPassword().equals(employee.getPassword());
+    // Inner class for login request
+    public static class LoginRequest {
+        private Integer id;
+        private String password;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 }

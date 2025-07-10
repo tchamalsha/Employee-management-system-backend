@@ -18,7 +18,7 @@ public class PersonalDetailsServiceImpl {
         this.personalDetailsRepository = personalDetailsRepository;
     }
 
-    public void addPersonalDetails(PersonalDetails personalDetails){
-        personalDetailsRepository.save(personalDetails);
+    public PersonalDetails addPersonalDetails(PersonalDetails personalDetails){
+        return personalDetailsRepository.save(personalDetails);
     }
 }

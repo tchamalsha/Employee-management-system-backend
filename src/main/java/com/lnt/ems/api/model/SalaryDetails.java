@@ -54,4 +54,12 @@ public class SalaryDetails {
     private Float otRate;
 
     private Integer specialAllowance;
+
+    public Integer getSpecialAllowance() {
+        return specialAllowance;
+    }
+
+    public void setSpecialAllowance(Integer specialAllowance) {
+        this.specialAllowance = specialAllowance;
+    }
 }

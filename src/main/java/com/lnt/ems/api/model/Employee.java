@@ -26,7 +26,7 @@ public class Employee {
     private String email;
     private String password;
     private String position;
-    private String role;
+    private Integer adminId; // ID of the admin who registered the employee
 
     public Integer getId() {
         return id;
@@ -68,11 +68,11 @@ public class Employee {
         this.position = position;
     }
 
-    public String getRole() {
-        return role;
+    public Integer getAdminId() {
+        return adminId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setAdminId(Integer adminId) {
+        this.adminId = adminId;
     }
 }
