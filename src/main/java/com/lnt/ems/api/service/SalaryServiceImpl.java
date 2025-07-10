@@ -1,54 +1,57 @@
 package com.lnt.ems.api.service;
 
-import com.lnt.ems.api.model.BasicSalary;
+import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.SalaryData;
-import com.lnt.ems.api.repository.BasicSalaryRepository;
+import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.SalaryDataRepository;
 import com.lnt.ems.api.repository.SalaryRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Date;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class SalaryServiceImpl  {
 
     private final SalaryRepository salaryRepository;
-    private final BasicSalaryRepository basicSalaryRepository;
+    private final SalaryDetailsRepository salaryDetailsRepository;
     private final SalaryDataRepository salaryDataRepository;
 
-    //add salary
-    public void setSalaryData(BasicSalary basicSalary){
-        basicSalaryRepository.save(basicSalary);
+    public SalaryServiceImpl(SalaryRepository salaryRepository, SalaryDetailsRepository salaryDetailsRepository, SalaryDataRepository salaryDataRepository) {
+        this.salaryRepository = salaryRepository;
+        this.salaryDetailsRepository = salaryDetailsRepository;
+        this.salaryDataRepository = salaryDataRepository;
     }
+
+    //add salary
+    public void setSalaryData(SalaryDetails salaryDetails){
+        salaryDetailsRepository.save(salaryDetails);
+    }
+    
     //get salary of an employee
-    public Float getSalary(Integer id, Date date){
+    public Float getSalary(Integer id, String date){
         return salaryRepository.getEmployeeSalary(date,id);
     }
 
     //get employee salary data
-    public SalaryData getSalaryData(Integer id,Date date){
+    public SalaryData getSalaryData(Integer id, String date){
         return salaryDataRepository.getSalaryData(id,date);
     }
 
     //get basic salary
     public Integer getBasicSalary(Integer id){
-        return  basicSalaryRepository.getBasicSalary(id);
+        return  salaryDetailsRepository.getBasicSalary(id);
     }
 
     //get OT rate
     public Float getOtRate(Integer id){
-        return basicSalaryRepository.getOtRate(id);
+        return salaryDetailsRepository.getOtRate(id);
     }
 
     //calculate salary
-    public Float calculateSalary(Integer id,Date date){
+    public Float calculateSalary(Integer id, String date){
         Integer basicSalary = getBasicSalary(id);
         Float otRate = getOtRate(id);
         SalaryData salaryData = getSalaryData(id,date);

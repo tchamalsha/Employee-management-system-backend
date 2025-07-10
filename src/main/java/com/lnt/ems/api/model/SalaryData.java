@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import java.util.Date;
+import javax.persistence.Column;
 
 @Table(
         uniqueConstraints = @UniqueConstraint(
@@ -24,7 +24,10 @@ public class SalaryData {
 
     @Id
     private Integer id;
-    private Date date;
+    
+    @Column(length = 7) // YYYY-MM format (7 characters)
+    private String date;
+    
     private Float noPayDays;
 
     public Integer getId() {
@@ -35,11 +38,11 @@ public class SalaryData {
         this.id = id;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -69,7 +72,5 @@ public class SalaryData {
 
     private Float overTimeHours;
     private Integer attendanceBonus;
-
-
 
 }

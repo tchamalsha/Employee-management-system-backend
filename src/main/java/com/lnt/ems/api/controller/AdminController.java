@@ -3,7 +3,6 @@ package com.lnt.ems.api.controller;
 import com.lnt.ems.api.model.Admin;
 import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.service.AdminServiceImpl;
-import com.lnt.ems.api.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

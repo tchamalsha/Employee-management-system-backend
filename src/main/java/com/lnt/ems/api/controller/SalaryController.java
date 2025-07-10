@@ -1,6 +1,6 @@
 package com.lnt.ems.api.controller;
 
-import com.lnt.ems.api.model.BasicSalary;
+import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.service.SalaryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class SalaryController {
     }
 
     @PostMapping("/signup/salaryDetails")
-    public void addPersonalDetails(@RequestBody BasicSalary basicSalary){
-        salaryService.setSalaryData(basicSalary);
+    public void addPersonalDetails(@RequestBody SalaryDetails salaryDetails){
+        salaryService.setSalaryData(salaryDetails);
     }
 }
