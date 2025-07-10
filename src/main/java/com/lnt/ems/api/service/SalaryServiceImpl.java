@@ -2,6 +2,7 @@ package com.lnt.ems.api.service;
 
 import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.SalaryData;
+import com.lnt.ems.api.model.Salary;
 import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.SalaryDataRepository;
 import com.lnt.ems.api.repository.SalaryRepository;
@@ -25,9 +26,14 @@ public class SalaryServiceImpl  {
         this.salaryDataRepository = salaryDataRepository;
     }
 
-    //add salary
+    //add salary details
     public void setSalaryData(SalaryDetails salaryDetails){
         salaryDetailsRepository.save(salaryDetails);
+    }
+    
+    //add salary data
+    public void addSalaryData(SalaryData salaryData){
+        salaryDataRepository.save(salaryData);
     }
     
     //get salary of an employee
@@ -60,5 +66,19 @@ public class SalaryServiceImpl  {
                 (otRate*salaryData.getOverTimeHours());
 
         return totalSalary;
+    }
+    
+    //calculate and save salary
+    public Float calculateAndSaveSalary(Integer id, String date){
+        Float calculatedSalary = calculateSalary(id, date);
+        
+        // Create and save salary record
+        Salary salary = new Salary();
+        salary.setId(id);
+        salary.setDate(date);
+        salary.setSalaryAmount(calculatedSalary);
+        salaryRepository.save(salary);
+        
+        return calculatedSalary;
     }
 }

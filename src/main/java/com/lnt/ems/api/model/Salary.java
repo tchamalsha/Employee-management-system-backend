@@ -30,6 +30,22 @@ public class Salary {
     
     private Float salaryAmount;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     public Float getSalaryAmount() {
         return salaryAmount;
     }
