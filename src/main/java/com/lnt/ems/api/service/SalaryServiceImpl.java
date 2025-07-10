@@ -3,43 +3,64 @@ package com.lnt.ems.api.service;
 import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.SalaryData;
 import com.lnt.ems.api.model.Salary;
+import com.lnt.ems.api.observer.SalaryCalculationObserver;
 import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.SalaryDataRepository;
 import com.lnt.ems.api.repository.SalaryRepository;
-import lombok.RequiredArgsConstructor;
+import com.lnt.ems.api.service.interfaces.SalaryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class SalaryServiceImpl  {
+public class SalaryServiceImpl implements SalaryService {
+
+    private static final Logger log = LoggerFactory.getLogger(SalaryServiceImpl.class);
 
     private final SalaryRepository salaryRepository;
     private final SalaryDetailsRepository salaryDetailsRepository;
     private final SalaryDataRepository salaryDataRepository;
+    private final SalaryCalculationStrategyService strategyService;
+    private final List<SalaryCalculationObserver> observers;
+
+    @Autowired
+    public SalaryServiceImpl(SalaryRepository salaryRepository,
+                           SalaryDetailsRepository salaryDetailsRepository,
+                           SalaryDataRepository salaryDataRepository,
+                           SalaryCalculationStrategyService strategyService,
+                           List<SalaryCalculationObserver> observers) {
+        this.salaryRepository = salaryRepository;
+        this.salaryDetailsRepository = salaryDetailsRepository;
+        this.salaryDataRepository = salaryDataRepository;
+        this.strategyService = strategyService;
+        this.observers = observers;
+    }
 
     //add salary
     public void setSalaryData(SalaryDetails salaryDetails){
         salaryDetailsRepository.save(salaryDetails);
     }
+    
     //get salary of an employee
     public Float getSalary(Integer id, Date date){
         return salaryRepository.getEmployeeSalary(date,id);
     }
 
     //get all salaries
-    public java.util.List<Salary> getAllSalaries() {
+    public List<Salary> getAllSalaries() {
         return salaryRepository.findAll();
     }
 
     //get all salaries for a specific employee
-    public java.util.List<Salary> getSalariesByEmployeeId(Integer employeeId) {
+    public List<Salary> getSalariesByEmployeeId(Integer employeeId) {
         return salaryRepository.findAllById(employeeId);
     }
 
@@ -58,33 +79,41 @@ public class SalaryServiceImpl  {
         return salaryDetailsRepository.getOtRate(id);
     }
 
-   
-
-    //calculate salary
-    public Float calculateSalary(Integer id,Date date){
-        Integer basicSalary = getBasicSalary(id);
-        Float otRate = getOtRate(id);
-        SalaryData salaryData = getSalaryData(id,date);
-
-        // Use default values if salaryData is null
-        Float noPayDays = (salaryData != null) ? salaryData.getNoPayDays() : 0.0f;
-        Integer attendanceBonus = (salaryData != null) ? salaryData.getAttendanceBonus() : 0;
-        Float overTimeHours = (salaryData != null) ? salaryData.getOverTimeHours() : 0.0f;
-
-        Float totalSalary = (basicSalary-(basicSalary/25 * noPayDays)) + attendanceBonus +
-                (otRate*overTimeHours);
-
-        return totalSalary;
+    //calculate salary using strategy pattern
+    public Float calculateSalary(Integer id, Date date){
+        return strategyService.calculateSalary("STANDARD", id, date);
+    }
+    
+    //calculate salary with specific strategy
+    public Float calculateSalary(String strategyType, Integer id, Date date){
+        return strategyService.calculateSalary(strategyType, id, date);
     }
 
-    //calculate and save salary
+    //calculate and save salary with observer pattern
     public Salary calculateAndSaveSalary(Integer id, Date date){
         Float calculatedSalary = calculateSalary(id, date);
         Salary salary = new Salary();
         salary.setId(id);
         salary.setDate(date);
         salary.setSalaryAmount(calculatedSalary);
-        return salaryRepository.save(salary);
+        
+        Salary savedSalary = salaryRepository.save(salary);
+        
+        // Notify observers
+        notifyObservers(savedSalary);
+        
+        return savedSalary;
+    }
+    
+    // Notify all observers
+    private void notifyObservers(Salary salary) {
+        for (SalaryCalculationObserver observer : observers) {
+            try {
+                observer.onSalaryCalculated(salary);
+            } catch (Exception e) {
+                log.error("Error notifying observer {}: {}", observer.getClass().getSimpleName(), e.getMessage());
+            }
+        }
     }
 
     //add salary data

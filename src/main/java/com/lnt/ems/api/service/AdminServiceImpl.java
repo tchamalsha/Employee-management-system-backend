@@ -9,6 +9,7 @@ import com.lnt.ems.api.repository.AdminRepository;
 import com.lnt.ems.api.repository.SalaryDetailsRepository;
 import com.lnt.ems.api.repository.EmployeeRepository;
 import com.lnt.ems.api.repository.PersonalDetailsRepository;
+import com.lnt.ems.api.service.interfaces.AdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.util.List;
 @Service
 @Transactional
 @Slf4j
-public class AdminServiceImpl  {
+public class AdminServiceImpl implements AdminService {
 
     private static final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
 

@@ -6,6 +6,7 @@ import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.model.User;
 import com.lnt.ems.api.repository.UserRepository;
 import com.lnt.ems.api.service.UserServiceImpl;
+import com.lnt.ems.api.dto.UserSignupRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -55,6 +56,50 @@ public class UserController {
     ){
         userService.addPersonalDetails(personalDetails);
         return ResponseEntity.ok("Personal details added successfully");
+    }
+
+    @PostMapping("/signup/unified")
+    @Operation(
+        summary = "Register new user (unified)",
+        description = "Creates a new user account in the appropriate table (admins or employees) based on the role specified"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User registered successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(oneOf = {Admin.class, Employee.class})
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid user data or invalid role"
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "User ID already exists in the system"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<Object> registerUser(
+        @Parameter(description = "User signup request with role information", required = true)
+        @RequestBody UserSignupRequest request
+    ) {
+        try {
+            Object registeredUser = userService.registerUser(request);
+            String message = "User registered successfully as " + request.getRole();
+            return ResponseEntity.ok(registeredUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Registration failed: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Internal server error: " + e.getMessage());
+        }
     }
 
     @PostMapping("/signup/admin")
@@ -213,6 +258,9 @@ public class UserController {
         @PathVariable Integer id
     ) {
         String userType = userService.getUserType(id);
+        if ("NOT_FOUND".equals(userType)) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(userType);
     }
 }

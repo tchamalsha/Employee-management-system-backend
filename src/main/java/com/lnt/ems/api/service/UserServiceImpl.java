@@ -8,8 +8,12 @@ import com.lnt.ems.api.repository.AdminRepository;
 import com.lnt.ems.api.repository.EmployeeRepository;
 import com.lnt.ems.api.repository.PersonalDetailsRepository;
 import com.lnt.ems.api.repository.UserRepository;
+import com.lnt.ems.api.service.interfaces.UserService;
+import com.lnt.ems.api.dto.UserSignupRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,7 +22,9 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final PersonalDetailsRepository personalDetailsRepository;
     private final UserRepository userRepository;
@@ -111,5 +117,53 @@ public class UserServiceImpl {
             return "LEGACY_USER";
         }
         return "NOT_FOUND";
+    }
+    
+    // New unified signup method that creates user in appropriate table based on role
+    @Override
+    public Object registerUser(UserSignupRequest request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        
+        if (isIdAlreadyExists(request.getId())) {
+            log.warn("Registration failed: ID {} already exists in the system", request.getId());
+            throw new IllegalArgumentException("User with ID " + request.getId() + " already exists in the system");
+        }
+        
+        // Validate role
+        if (!"ADMIN".equals(request.getRole()) && !"EMPLOYEE".equals(request.getRole())) {
+            throw new IllegalArgumentException("Invalid role. Must be either ADMIN or EMPLOYEE");
+        }
+        
+        // Create user based on role
+        if ("ADMIN".equals(request.getRole())) {
+            Admin admin = new Admin();
+            admin.setId(request.getId());
+            admin.setName(request.getName());
+            admin.setEmail(request.getEmail());
+            admin.setPassword(request.getPassword());
+            admin.setPosition(request.getPosition());
+            admin.setRole("ADMIN");
+            
+            log.info("Registering new admin: {} with email: {}", request.getName(), request.getEmail());
+            return adminRepository.save(admin);
+            
+        } else if ("EMPLOYEE".equals(request.getRole())) {
+            Employee employee = new Employee();
+            employee.setId(request.getId());
+            employee.setName(request.getName());
+            employee.setEmail(request.getEmail());
+            employee.setPassword(request.getPassword());
+            employee.setPosition(request.getPosition());
+            employee.setRole("EMPLOYEE");
+            employee.setAdminId(request.getAdminId()); // Set the admin who created this employee
+            
+            log.info("Registering new employee: {} with email: {} under admin ID: {}", 
+                    request.getName(), request.getEmail(), request.getAdminId());
+            return employeeRepository.save(employee);
+        }
+        
+        throw new IllegalArgumentException("Invalid role specified");
     }
 }

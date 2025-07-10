@@ -4,7 +4,7 @@ import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.PersonalDetails;
 import com.lnt.ems.api.model.Salary;
 import com.lnt.ems.api.model.SalaryData;
-import com.lnt.ems.api.service.SalaryServiceImpl;
+import com.lnt.ems.api.service.interfaces.SalaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,15 +21,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @Tag(name = "Salary Management", description = "APIs for managing employee salary information")
 public class SalaryController {
 
-    private SalaryServiceImpl salaryService;
+    private SalaryService salaryService;
 
     @Autowired
-    public SalaryController(SalaryServiceImpl salaryService) {
+    public SalaryController(SalaryService salaryService) {
         this.salaryService = salaryService;
     }
 
@@ -79,8 +81,8 @@ public class SalaryController {
             description = "Internal server error"
         )
     })
-    public ResponseEntity<java.util.List<Salary>> getAllSalaries(){
-        java.util.List<Salary> salaries = salaryService.getAllSalaries();
+    public ResponseEntity<List<Salary>> getAllSalaries(){
+        List<Salary> salaries = salaryService.getAllSalaries();
         return ResponseEntity.ok(salaries);
     }
 
@@ -107,11 +109,11 @@ public class SalaryController {
             description = "Internal server error"
         )
     })
-    public ResponseEntity<java.util.List<Salary>> getSalariesByEmployeeId(
+    public ResponseEntity<List<Salary>> getSalariesByEmployeeId(
         @Parameter(description = "Employee ID", required = true)
         @PathVariable Integer employeeId
     ){
-        java.util.List<Salary> salaries = salaryService.getSalariesByEmployeeId(employeeId);
+        List<Salary> salaries = salaryService.getSalariesByEmployeeId(employeeId);
         if (salaries == null || salaries.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -155,6 +157,63 @@ public class SalaryController {
             // Parse date string to Date object
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
             java.util.Date parsedDate = sdf.parse(date);
+            Salary savedSalary = salaryService.calculateAndSaveSalary(employeeId, parsedDate);
+            return ResponseEntity.ok(savedSalary);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/calculate-salary/{strategy}/{employeeId}/{date}")
+    @Operation(
+        summary = "Calculate and save salary with strategy",
+        description = "Calculates salary for an employee using a specific calculation strategy"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Salary calculated and saved successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = Salary.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid employee data or missing salary information"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Employee not found"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error"
+        )
+    })
+    public ResponseEntity<Salary> calculateAndSaveSalaryWithStrategy(
+        @Parameter(description = "Calculation strategy (STANDARD, EXECUTIVE)", required = true)
+        @PathVariable String strategy,
+        @Parameter(description = "Employee ID", required = true)
+        @PathVariable Integer employeeId,
+        @Parameter(description = "Date for salary calculation", required = true)
+        @PathVariable String date
+    ){
+        try {
+            // Parse date string to Date object
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = sdf.parse(date);
+            
+            // Calculate salary using strategy
+            Float calculatedSalary = salaryService.calculateSalary(strategy, employeeId, parsedDate);
+            
+            // Create and save salary
+            Salary salary = new Salary();
+            salary.setId(employeeId);
+            salary.setDate(parsedDate);
+            salary.setSalaryAmount(calculatedSalary);
+            
+            // Use service method to save
             Salary savedSalary = salaryService.calculateAndSaveSalary(employeeId, parsedDate);
             return ResponseEntity.ok(savedSalary);
         } catch (Exception e) {
