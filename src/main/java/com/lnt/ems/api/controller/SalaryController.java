@@ -3,6 +3,7 @@ package com.lnt.ems.api.controller;
 import com.lnt.ems.api.model.SalaryDetails;
 import com.lnt.ems.api.model.SalaryData;
 import com.lnt.ems.api.model.PersonalDetails;
+import com.lnt.ems.api.model.Salary;
 import com.lnt.ems.api.service.SalaryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -60,6 +61,22 @@ public class SalaryController {
         }
     }
 
+    @PostMapping("/user/salaries")
+    public java.util.List<Salary> getAllSalaries(@RequestBody SalaryIdRequest request) {
+        if (request.getId() == null) {
+            return java.util.Collections.emptyList();
+        }
+        return salaryService.getAllSalaries(request.getId());
+    }
+
+    @PostMapping("/salaries/date")
+    public java.util.List<Salary> getAllSalariesByDate(@RequestBody SalaryDateRequest request) {
+        if (request.getDate() == null) {
+            return java.util.Collections.emptyList();
+        }
+        return salaryService.getAllSalariesByDate(request.getDate());
+    }
+
     // Inner class for salary calculation request
     public static class SalaryCalculationRequest {
         private Integer id;
@@ -99,5 +116,19 @@ public class SalaryController {
         public void setDate(String date) {
             this.date = date;
         }
+    }
+
+    // Inner class for salary id request
+    public static class SalaryIdRequest {
+        private Integer id;
+        public Integer getId() { return id; }
+        public void setId(Integer id) { this.id = id; }
+    }
+
+    // Inner class for salary date request
+    public static class SalaryDateRequest {
+        private String date;
+        public String getDate() { return date; }
+        public void setDate(String date) { this.date = date; }
     }
 }

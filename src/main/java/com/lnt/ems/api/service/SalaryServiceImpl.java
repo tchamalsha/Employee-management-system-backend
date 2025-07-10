@@ -81,4 +81,14 @@ public class SalaryServiceImpl  {
         
         return calculatedSalary;
     }
+
+    //get all salaries for an employee
+    public java.util.List<Salary> getAllSalaries(Integer id) {
+        return salaryRepository.findAllByEmployeeId(id);
+    }
+
+    //get all salaries for a given date
+    public java.util.List<Salary> getAllSalariesByDate(String date) {
+        return salaryRepository.findAllByDate(date);
+    }
 }
