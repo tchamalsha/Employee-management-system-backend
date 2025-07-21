@@ -10,7 +10,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Integer> {
 
     Employee findEmployeeById(Integer id);
 
-    @Query("SELECT user from User user where user.role='EMPLOYEE'")
+    @Query("SELECT emp from Employee emp")
     String getAllEmployees();
 
 }

@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Table(
+        name = "salary_details",
         uniqueConstraints = @UniqueConstraint(
                 columnNames = {"id"}
         )
@@ -19,7 +20,7 @@ import javax.persistence.UniqueConstraint;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BasicSalary {
+public class SalaryDetails {
 
     @Id
     private Integer id;
@@ -40,8 +41,6 @@ public class BasicSalary {
         this.basicSalary = basicSalary;
     }
 
-
-
     private Integer basicSalary;
 
     public Float getOtRate() {
@@ -55,4 +54,12 @@ public class BasicSalary {
     private Float otRate;
 
     private Integer specialAllowance;
+
+    public Integer getSpecialAllowance() {
+        return specialAllowance;
+    }
+
+    public void setSpecialAllowance(Integer specialAllowance) {
+        this.specialAllowance = specialAllowance;
+    }
 }
